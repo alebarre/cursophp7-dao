@@ -2,12 +2,10 @@
 
 require_once ("config.php");
 
-$Sql = new Sql();
+$root = new Usuario();
 
-//$usuarios = $Sql->select("SELECT * FROM tb_usuarios");
+$root->loadById(8);
 
-///$Sql->query("DELETE FROM tb_usuarios WHERE idusuario = :ID", array(":ID"=>5));
-
-echo json_encode($Sql->select("SELECT * FROM tb_usuarios"));
+echo $root;
 
 ?>
