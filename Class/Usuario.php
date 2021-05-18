@@ -40,7 +40,7 @@ Class Usuario {
 	}
 
 
-	//Carrega um usuario da tabela 'usuario' pelo ID
+	//SELECT de um usuario pelo ID
 	public function loadById($id){
 		$sql = new Sql();
 		$result = $sql->select("SELECT * FROM tb_usuarios WHERE idusuario = :ID", array(
@@ -53,13 +53,13 @@ Class Usuario {
 		}
 	}
 
-	//Retorna uma lista de usuarios
+	//SELECT lista de usuarios
 	public static function getList(){
 		$sql = new Sql();
 		return $sql->select("SELECT * FROM tb_usuarios ORDER BY deslogin");
 	}
 
-	//Retorna um usuario pelo login.
+	//SELECT pelo login.
 	public static function search($login){
 		$sql = new Sql();
 		return $sql->select("SELECT * FROM tb_usuarios WHERE deslogin LIKE :SEARCH ORDER BY deslogin", array(
@@ -67,7 +67,7 @@ Class Usuario {
 		));
 	}
 
-	//Obter dados de usuaio AUTENTICADO
+	//SELECT dados de usuaio AUTENTICADO
 	public function login($login, $password){
 		$sql = new Sql();
 		$result = $sql->select("SELECT * FROM tb_usuarios WHERE deslogin = :LOGIN AND dessenha = :PASSWORD", array(
@@ -90,12 +90,13 @@ Class Usuario {
 		$this->setDtCadastro(new DateTime($data['dtcadastro']));
 	}
 
-	//Controi o objeto com os dados de login e senha, se vierem.
+	//Constroi o objeto com os dados de login e senha, se vierem.
 	public function __construct($login = "", $password = ""){
 		$this->setDeslogin($login);
 		$this->setDessenha($password);
 	}
 
+	//INSERT na tabela usuário
 	public function insert(){
 		$sql = new Sql();
 		$results = $sql->select("CALL sp_usuarios_insert(:LOGIN, :SENHA)", array(
@@ -108,6 +109,7 @@ Class Usuario {
 		}
 	}
 
+	//UPDATE na tabela usuário, a apertir o login e password
 	public function update($login, $password){
 		$this->setDeslogin($login);
 		$this->setDessenha($password);
@@ -119,6 +121,19 @@ Class Usuario {
 		));
 	}
 
+	//DELETE na tabela usuários
+	public function delete(){
+		$sql = new Sql();
+		$sql->query("DELETE FROM tb_usuarios WHERE idusuario = :ID", array(
+			":ID"	=>	$this->getIdUsuario()
+		));
+
+		$this->setIdUsuario(0);
+		$this->setDeslogin('');
+		$this->setDessenha('');
+		$this->setDtCadastro(new DateTime());
+	}
+
 	//Formata a saida de dados para Json Encode
 	public function __toString(){
 		return json_encode(array(
@@ -128,8 +143,6 @@ Class Usuario {
 			"dtcadastro" 	=> $this->getDtCadastro()
 		));
 	}
-
-
 }//Class Usuario
 
- ?>
+?>
